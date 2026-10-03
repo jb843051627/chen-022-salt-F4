@@ -91,6 +91,24 @@ CREATE TABLE IF NOT EXISTS t_salt_renew_bill (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='延续换证核签单';
 
+CREATE TABLE IF NOT EXISTS t_salt_spot_batch (
+  batch_no varchar(64) NOT NULL COMMENT '监督抽检结果报送册码(进门定死,一册一个)',
+  total_rows int DEFAULT NULL COMMENT '这册几行(回执落账,库内轧出)',
+  accepted_rows int DEFAULT NULL COMMENT '收下几行',
+  rejected_rows int DEFAULT NULL COMMENT '退回几行',
+  pending_rows int DEFAULT NULL COMMENT '未勾几行(非零即账不平,不能核讫)',
+  receipt_mark varchar(16) DEFAULT NULL COMMENT '核讫那一栏 核讫/空册',
+  source varchar(32) DEFAULT NULL COMMENT '来路 县汇交/本处自录',
+  report_year int DEFAULT NULL COMMENT '报送年度(进门那年定死)',
+  del_flag int DEFAULT '0' COMMENT '删除标记 0在册 1已撤(撤册后册码方许重新进门)',
+  create_by varchar(64) DEFAULT NULL COMMENT '创建者',
+  create_time datetime DEFAULT NULL COMMENT '创建时间',
+  update_by varchar(64) DEFAULT NULL COMMENT '更新者',
+  update_time datetime DEFAULT NULL COMMENT '更新时间',
+  remark varchar(500) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (batch_no)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='抽检结果报送册册头(回执落账处)';
+
 CREATE TABLE IF NOT EXISTS t_salt_spot_row (
   id bigint NOT NULL COMMENT '主键',
   batch_no varchar(64) DEFAULT NULL COMMENT '监督抽检结果报送册码',
@@ -99,13 +117,16 @@ CREATE TABLE IF NOT EXISTS t_salt_spot_row (
   qty decimal(12,2) DEFAULT NULL COMMENT '本行不合格件数',
   hours_num decimal(12,2) DEFAULT NULL COMMENT '本行送检件数',
   status int DEFAULT NULL COMMENT '行落地情形 0未勾 1已收下 2已退回',
+  report_year int DEFAULT NULL COMMENT '报送年度(进门定死,跨年归档据此判)',
+  archived int DEFAULT '0' COMMENT '所在层 0现行名单 1往期层',
   del_flag int DEFAULT '0' COMMENT '删除标记 0正常 1删除',
   create_by varchar(64) DEFAULT NULL COMMENT '创建者',
   create_time datetime DEFAULT NULL COMMENT '创建时间',
   update_by varchar(64) DEFAULT NULL COMMENT '更新者',
   update_time datetime DEFAULT NULL COMMENT '更新时间',
-  remark varchar(500) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (id)
+  remark varchar(500) DEFAULT NULL COMMENT '备注(退回缘由写在这)',
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_batch_row (batch_no, row_no)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='抽检结果报送核收行';
 
 CREATE TABLE IF NOT EXISTS t_salt_year_task (

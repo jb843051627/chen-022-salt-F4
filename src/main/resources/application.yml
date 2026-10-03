@@ -128,3 +128,10 @@ oss:
   access-key: minioadmin  # 上文创建的AK
   secret-key: minioadmin # 上文创建的SK
   bucket-name: v2-cloud  # 上文创建的桶名称
+# 食盐监督抽检结果报送册
+salt:
+  spot:
+    # 处里给每一册定的行数顶：册头先数行，压过顶的整册原样退回，库里一行不留
+    max-rows: 500
+    # 当季定下的不合格件数限值：本行不合格件数压过它则本行原路退回；-1=本季未设限
+    max-fail-qty: -1

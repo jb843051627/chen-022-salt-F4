@@ -26,6 +26,18 @@ import java.util.Date;
 public class TSaltSpotRow implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    /** 去向：未勾（进门默认，留待以后落） */
+    public static final int STATUS_PENDING = 0;
+    /** 去向：收下 */
+    public static final int STATUS_ACCEPTED = 1;
+    /** 去向：退回 */
+    public static final int STATUS_REJECTED = 2;
+
+    /** 层：现行名单 */
+    public static final int ARCHIVE_CURRENT = 0;
+    /** 层：往期（旧册未勾行跨年迁此，只翻不改） */
+    public static final int ARCHIVE_PAST = 1;
+
     /** 主键 */
     @TableId(type = IdType.ASSIGN_ID)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -61,6 +73,16 @@ public class TSaltSpotRow implements Serializable {
     @TableField("status")
     @ApiModelProperty(value = "行落地情形 0未勾 1已收下 2已退回")
     private Integer status;
+
+    /** 报送年度（进门那一刻定死，往期归档据此判） */
+    @TableField("report_year")
+    @ApiModelProperty(value = "报送年度")
+    private Integer reportYear;
+
+    /** 所在层 0现行名单 1往期层 */
+    @TableField("archived")
+    @ApiModelProperty(value = "所在层 0现行名单 1往期层")
+    private Integer archived;
 
     /** 删除标记 0正常 1删除 */
     @TableField("del_flag")
@@ -156,6 +178,22 @@ public class TSaltSpotRow implements Serializable {
 
     public void setDelFlag(Integer delFlag) {
         this.delFlag = delFlag;
+    }
+
+    public Integer getReportYear() {
+        return reportYear;
+    }
+
+    public void setReportYear(Integer reportYear) {
+        this.reportYear = reportYear;
+    }
+
+    public Integer getArchived() {
+        return archived;
+    }
+
+    public void setArchived(Integer archived) {
+        this.archived = archived;
     }
 
     public String getCreateBy() {
